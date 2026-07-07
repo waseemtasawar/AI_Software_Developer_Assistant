@@ -1,18 +1,19 @@
-const mongoose = require('mongoose');
-const dotenv = require('dotenv');
+const mongoose = require("mongoose");
 
+const connectDB = async () => {
+  try {
+    const DB = process.env.DATABASE.replace(
+      "<PASSWORD>",
+      process.env.DATABASE_PASSWORD
+    );
 
-const ConnectDB = process.env.DATABASE.replace(
-    '<PASSWORD>', 
-    process.env.DATABASE_PASSWORD);
+    await mongoose.connect(DB);
 
+    console.log("✅ DB connection successful");
+  } catch (err) {
+    console.error("❌ DB connection failed:", err.message);
+    process.exit(1);
+  }
+};
 
-mongoose.connect(ConnectDB)
-.then(()=>{
-    console.log('DB connection successful')
-})
-.catch((err)=>{
-    console.log('DB connection failed', err)
-})
-
-module.exports = ConnectDB;
+module.exports = connectDB;

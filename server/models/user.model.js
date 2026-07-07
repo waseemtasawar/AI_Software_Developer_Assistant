@@ -49,6 +49,12 @@ const userSchema = new mongoose.Schema({
 {timestamps:true}
 );
 
+userSchema.pre('save', async function(next){
+    if(!this.isModified('password')) return next();
+    this.password = await becrypt.hash(this.password, 12);
+    this.passwordConfirm = undefined;
+
+});
 
 userSchema.methods.correctPassword = async function(candidatePassword, userPassword){
     return await becrypt.compare(candidatePassword, userPassword);
