@@ -21,7 +21,7 @@ const uploadProject = catchAsync(async (req, res, next) => {
     user: req.user._id,
     name: projectName,
     description: description || "",
-    originalFilename: req.file.originalname,
+    originalFileName: req.file.originalname,
     status: "processing",
   });
 

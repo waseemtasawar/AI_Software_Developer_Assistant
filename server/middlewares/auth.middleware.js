@@ -43,3 +43,7 @@ exports.protect = catchAsync(async (req, res, next) =>{
     req.user = currentUser;
     next();
 })
+
+module.exports = {
+    protect: exports.protect,
+}

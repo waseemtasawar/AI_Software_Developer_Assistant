@@ -15,7 +15,7 @@ const fileSchema = new mongoose.Schema({
         type:String,
         required:[true, "Please provide a file name"]
     },
-    filepath:{
+    filePath:{
         type:String,
         required:[true, "Please provide a file path"]
     },

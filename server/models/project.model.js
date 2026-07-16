@@ -14,7 +14,7 @@ const projectSchema = new mongoose.Schema({
         type:String,
         default:""
     },
-    orignalFilename:{
+    originalFileName:{
         type:String,
         required:[true, "Please provide a project orignal filename"]
     },
