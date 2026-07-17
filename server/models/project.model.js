@@ -1,36 +1,129 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
-const projectSchema = new mongoose.Schema({
-    user:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:'User',
-        required:true
-    },
-    name:{
-        type:String,
-        required:[true, "Please provide a project name"]
-    },
-    description:{
-        type:String,
-        default:""
-    },
-    originalFileName:{
-        type:String,
-        required:[true, "Please provide a project orignal filename"]
-    },
-    totalFiles:{
-        type:Number,
-        default:0
-    },
-    status:{
-        type:String,
-        enum:["processing", "completed", "failed"],
-        default:"processing"
+const projectSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: [true, "Project name is required"],
+      trim: true,
     },
 
-},
-{timestamps:true}
-)
+    description: {
+      type: String,
+      default: "",
+    },
 
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
 
-module.exports = mongoose.model('Project', projectSchema);
+    originalFileName: {
+      type: String,
+    },
+
+    totalFiles: {
+      type: Number,
+      default: 0,
+    },
+
+    analysisStatus: {
+      type: String,
+      enum: ["not_started", "processing", "completed", "failed"],
+      default: "not_started",
+    },
+
+    analysisError: {
+      type: String,
+      default: null,
+    },
+
+    analysis: {
+      primaryLanguage: {
+        type: String,
+        default: "Unknown",
+      },
+
+      languages: [
+        {
+          name: String,
+          files: Number,
+          percentage: Number,
+        },
+      ],
+
+      frontend: {
+        type: String,
+        default: "Not detected",
+      },
+
+      backend: {
+        type: String,
+        default: "Not detected",
+      },
+
+      framework: {
+        type: String,
+        default: "Not detected",
+      },
+
+      database: {
+        type: String,
+        default: "Not detected",
+      },
+
+      packageManager: {
+        type: String,
+        default: "Not detected",
+      },
+
+      dependencies: {
+        type: [String],
+        default: [],
+      },
+
+      devDependencies: {
+        type: [String],
+        default: [],
+      },
+
+      statistics: {
+        totalFiles: {
+          type: Number,
+          default: 0,
+        },
+
+        codeFiles: {
+          type: Number,
+          default: 0,
+        },
+
+        totalLines: {
+          type: Number,
+          default: 0,
+        },
+
+        totalFolders: {
+          type: Number,
+          default: 0,
+        },
+      },
+
+      folderTree: {
+        type: mongoose.Schema.Types.Mixed,
+        default: {},
+      },
+
+      analyzedAt: {
+        type: Date,
+        default: null,
+      },
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
+
+module.exports = mongoose.model("Project", projectSchema);
