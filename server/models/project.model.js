@@ -120,6 +120,50 @@ const projectSchema = new mongoose.Schema(
         default: null,
       },
     },
+
+    // chunking
+    chunkingStatus: {
+  type: String,
+  enum: ["not_started", "processing", "completed", "failed"],
+  default: "not_started",
+},
+
+chunkingError: {
+  type: String,
+  default: null,
+},
+
+chunkingStats: {
+  totalChunks: {
+    type: Number,
+    default: 0,
+  },
+
+  chunkedFiles: {
+    type: Number,
+    default: 0,
+  },
+
+  skippedFiles: {
+    type: Number,
+    default: 0,
+  },
+
+  totalCharacters: {
+    type: Number,
+    default: 0,
+  },
+
+  estimatedTokens: {
+    type: Number,
+    default: 0,
+  },
+
+  chunkedAt: {
+    type: Date,
+    default: null,
+  },
+},
   },
   {
     timestamps: true,

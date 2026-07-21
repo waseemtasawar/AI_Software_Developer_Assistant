@@ -12,10 +12,11 @@ const uploadProject = catchAsync(async (req, res, next) => {
   const { name, description } = req.body;
 
   if (!req.file) {
-    return next(new appError("Please provide a zip file", 400));
+    return next(new AppError("Please provide a ZIP file", 400));
   }
 
-  const projectName = name || req.file.originalname.replace(".zip", "");
+  const projectName =
+    name || path.parse(req.file.originalname).name;
 
   const project = await Project.create({
     user: req.user._id,
@@ -25,30 +26,79 @@ const uploadProject = catchAsync(async (req, res, next) => {
     status: "processing",
   });
 
-  const extractedFiles = extractZipFile(req.file.path);
+  try {
+    const extractedFiles = extractZipFile(req.file.path);
 
-  const filesToSave = extractedFiles.map((file) => ({
-    ...file,
-    project: project._id,
-    user: req.user._id,
-  }));
+    const filesToSave = extractedFiles.map((file) => {
+      const filePath =
+        file.filePath ||
+        file.path ||
+        file.entryName ||
+        "";
 
-  if (filesToSave.length > 0) {
-    await File.insertMany(filesToSave);
+      const fileName =
+        file.fileName ||
+        file.name ||
+        path.basename(filePath);
+
+      return {
+        project: project._id,
+        user: req.user._id,
+        fileName,
+        filePath,
+        extension:
+          file.extension ||
+          path.extname(fileName).toLowerCase(),
+        language: file.language || "Unknown",
+        content: file.content || "",
+        size:
+          file.size ||
+          Buffer.byteLength(file.content || "", "utf8"),
+      };
+    });
+
+    const invalidFiles = filesToSave.filter(
+      (file) => !file.fileName || !file.filePath
+    );
+
+    if (invalidFiles.length > 0) {
+      console.log("Invalid extracted files:", invalidFiles);
+
+      throw new AppError(
+        "Some extracted files are missing fileName or filePath",
+        500
+      );
+    }
+
+    if (filesToSave.length > 0) {
+      await File.insertMany(filesToSave);
+    }
+
+    project.totalFiles = filesToSave.length;
+    project.status = "completed";
+    await project.save();
+
+    return res.status(201).json({
+      success: true,
+      message: "Project uploaded successfully",
+      project,
+      totalFiles: filesToSave.length,
+    });
+  } catch (error) {
+    project.status = "failed";
+    await project.save();
+
+    await File.deleteMany({
+      project: project._id,
+      user: req.user._id,
+    });
+
+    return next(error);
+  } finally {
+    if (req.file?.path && fs.existsSync(req.file.path)) {
+      fs.unlinkSync(req.file.path);
+    }
   }
-
-  project.totalFiles = filesToSave.length;
-  project.status = "completed";
-  await project.save();
-
-  fs.unlinkSync(req.file.path);
-
-  return res.status(201).json({
-    success: true,
-    message: "Project uploaded successfully",
-    project,
-    totalFiles: filesToSave.length,
-  });
 });
 
 const getProjects = catchAsync(async (req,res, next) =>{

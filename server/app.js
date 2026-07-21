@@ -10,6 +10,7 @@ const compression = require('compression');
 const authRoutes = require('./routes/auth.routes');
 const projectRoutes = require('./routes/project.routes');
 const fileRoutes = require('./routes/file.routes');
+const analyzerRoutes = require('./routes/analyzer.routes');
 const app = express();
 
 
@@ -41,6 +42,7 @@ app.get("/", (req, res) => {
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/projects', projectRoutes);
 app.use('/api/v1/files', fileRoutes);
+app.use('/api/v1/analyzer', analyzerRoutes);
 
 
 
