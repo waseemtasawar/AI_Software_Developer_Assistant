@@ -1,10 +1,10 @@
-const Queue = require('bullmq');
+const {Queue} = require('bullmq');
 
 const createdRedisConnection = require('../config/redis');
 
-const { QUEUE_NAME, JOB_NAMES } = require('../config/constants');
+const {QUEUE_NAMES, JOB_NAMES}  = require('../constants/queueNames');
 
-const projectQueue = new Queue(QUEUE_NAME.PROJECT_PROCESSING, {
+const projectQueue = new Queue(QUEUE_NAMES.PROJECT_PROCESSING, {
     connection: createdRedisConnection(),
 
     defaultJobOptions: {
