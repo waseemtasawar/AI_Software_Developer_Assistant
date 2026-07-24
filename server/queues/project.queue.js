@@ -51,7 +51,24 @@ const addChunkProjectJob = async ({
     )
 }
 
+const addGenerateEmbeddingsJob = async ({
+  projectId,
+  userId,
+}) => {
+  return projectQueue.add(
+    JOB_NAMES.GENERATE_EMBEDDINGS,
+    {
+      projectId: projectId.toString(),
+      userId: userId.toString(),
+    },
+    {
+      jobId: `embeddings-${projectId}-${Date.now()}`,
+    }
+  );
+};
+
 module.exports = {
     projectQueue,
     addChunkProjectJob,
+    addGenerateEmbeddingsJob,
 };
