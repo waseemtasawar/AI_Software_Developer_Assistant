@@ -78,6 +78,16 @@ const chunkSchema = new mongoose.Schema(
       type: String,
       default: null,
     },
+    vectorId: {
+      type: String,
+      default: null,
+      index: true,
+    },
+
+    embeddedAt: {
+      type: Date,
+      default: null,
+    },
   },
   {
     timestamps: true,

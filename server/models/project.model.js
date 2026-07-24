@@ -164,6 +164,50 @@ chunkingStats: {
     default: null,
   },
 },
+
+embeddingStatus: {
+  type: String,
+  enum: [
+    "not_started",
+    "pending",
+    "processing",
+    "completed",
+    "failed",
+  ],
+  default: "not_started",
+},
+
+embeddingError: {
+  type: String,
+  default: null,
+},
+
+embeddingStats: {
+  totalChunks: {
+    type: Number,
+    default: 0,
+  },
+
+  embeddedChunks: {
+    type: Number,
+    default: 0,
+  },
+
+  failedChunks: {
+    type: Number,
+    default: 0,
+  },
+
+  vectorDimension: {
+    type: Number,
+    default: 0,
+  },
+
+  embeddedAt: {
+    type: Date,
+    default: null,
+  },
+},
   },
   {
     timestamps: true,
